@@ -166,7 +166,7 @@ const executeMain = async () => {
         const existingUserData = loadExistingData();
         const proxyChoice = proxyUsage ? proxy : (existingUserData[email]?.proxy || 'proxy');
 
-        if (proxyUsage) {
+        if (proxyUsage && proxyChoice.startsWith('http://')) {
             process.env.GLOBAL_AGENT_HTTP_PROXY = proxyChoice;
             bootstrap();
         }
