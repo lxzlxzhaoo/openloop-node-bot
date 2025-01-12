@@ -1,6 +1,7 @@
 const fileSystem = require('fs');
 const readlineInterface = require('readline');
 const { bootstrap } = require('global-agent');
+const { SocksProxyAgent } = require('socks-proxy-agent');
 
 const TEXT_COLORS = {
     BOLD_YELLOW: '\x1b[1m\x1b[33m',
@@ -147,6 +148,14 @@ const createUserAccount = async (email, password, proxy) => {
         console.error('An error occurred during registration:', error.message);
         await authenticateUser(email, password, proxy);
     }
+};
+
+const createProxyAgent = (proxy) => {
+    if (!proxy) return undefined;
+    if (proxy.startsWith('socks5://')) {
+        return new SocksProxyAgent(proxy);
+    }
+    return new ProxyAgent(proxy);
 };
 
 const executeMain = async () => {

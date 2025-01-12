@@ -2,6 +2,7 @@ const fileSystem = require('fs');
 const readlineInterface = require('readline');
 const { HttpsProxyAgent: ProxyAgent } = require('https-proxy-agent');
 const dynamicFetch = (url, options = {}) => import('node-fetch').then(({ default: fetch }) => fetch(url, options));
+const { SocksProxyAgent } = require('socks-proxy-agent');
 
 const TEXT_COLORS = {
     BOLD_GOLD: '\x1b[1m\x1b[33m',
@@ -152,10 +153,18 @@ const completeMission = async (missionId, token, useProxy, proxy, index) => {
     }
 };
 
+const createProxyAgent = (proxy) => {
+    if (!proxy) return undefined;
+    if (proxy.startsWith('socks5://')) {
+        return new SocksProxyAgent(proxy);
+    }
+    return new ProxyAgent(proxy);
+};
+
 const distributeBandwidth = async (token, proxy, useProxy, email, index, errorCounter) => {
     try {
         const randomQuality = qualitygen();
-        const agent = useProxy ? new ProxyAgent(proxy) : undefined;
+        const agent = useProxy ? createProxyAgent(proxy) : undefined;
 
         const fetch = (await import('node-fetch')).default;
 
